@@ -1,16 +1,73 @@
 #include <iostream>
+using namespace std;
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
+
+///=========CLASSES==============
+
+
+class Card {
+private:
+    char* name;
+    const int id; //max=78
+    static int totalCards;
+    char* arcana;
+    bool reversed;
+    float energy;
+    const char* meaning;
+public:
+    Card(char* name, int id, char* arcana, float energy, const char* meaning);
+
+};
+
+class Deck {
+private:
+    Card *cards;
+    static int totalDecks;
+    const int id;
+    float price;
+    int* scores; //1-career 2-love 3-self
+    int hope;
+public:
+    Deck(Card *cards, float price, int* scores, int hope);
+};
+
+class Player {
+private:
+    char* name;
+    char* job;
+    double money;
+    long confusionLevel;
+    bool active; //if confusion level=max>>>>>bye
+public:
+
+};
+
+class Session {
+    char domain; // Love-Career-Self
+    char* type; //Open or Yes/No
+
+    //if open:
+    char* spread; //general, specific
+
+    //if specific:
+    int nrDrawnCard;
+    Card* drawnCards;
+
+    //if yes or no:
+    bool answer;
+    double price;
+};
+
+///============CONSTRUCTORS============
+
+//====CARD
+
+
+
+
+
 int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the <b>lang</b> variable name to see how CLion can help you rename it.
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
-
-    for (int i = 1; i <= 5; i++) {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
-    }
-
     return 0;
-    // TIP See CLion help at <a href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>. Also, you can try interactive lessons for CLion by selecting 'Help | Learn IDE Features' from the main menu.
+
 }
