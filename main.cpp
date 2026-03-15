@@ -16,7 +16,7 @@ private:
 public:
     Card();
     Card( char* name,char arcana, float energy, char* meaning);
-    Card(const Card&);
+    Card(const Card& obj);
     Card& operator=(const Card& obj);
     ~Card();
 };
@@ -32,6 +32,9 @@ private:
 public:
     Deck();
     Deck(Card *cards, float price, int* scores, int hope);
+    Deck(const Deck& obj);
+    Deck& operator=(const Deck& obj);
+    ~Deck();
 };
 
 class Player {
@@ -126,9 +129,74 @@ Card::~Card() {
     }
 }
 
+//=======DECK
+
+Deck::Deck():id(++totalDecks) {
+    cards= new Card[78]; //calls parameterless Card constructor
+    price=0.0;
+    scores= new int[3]{0,0,0};
+    hope=0;
+}
+
+Deck::Deck(Card *cards, float price, int *scores, int hope):id(++totalDecks){
+    this->cards= new Card[78];
+    for(int i=0; i<78; i++) {
+        this->cards[i]=cards[i]; //operator= din Card
+    }
+    this->price=price;
+    this->scores=new int[3];
+    for(int i=0;i<3;i++) {
+        this->scores[i]=scores[i];
+    }
+    this->hope=hope;
+}
+
+Deck::Deck(const Deck& obj):id(obj.id) {
+    this->cards= new Card[78];
+    for(int i=0; i<78; i++) {
+        this->cards[i]=obj.cards[i]; //operator= din Card
+    }
+    this->price=obj.price;
+    this->scores=new int[3];
+    for(int i=0;i<3;i++) {
+        this->scores[i]=obj.scores[i];
+    }
+    this->hope=obj.hope;
+}
+
+Deck& Deck::operator=(const Deck& obj) {
+    if (this==&obj) return *this;
+
+    delete[] cards;
+    delete[] scores;
+
+    this->cards= new Card[78];
+    for (int i=0;i<78;i++) {
+        this->cards[i]=obj.cards[i];
+    }
+    this->price=obj.price;
+    this->scores= new int[3];
+    for (int i=0;i<3;i++) {
+        this->scores[i]=obj.scores[i];
+    }
+    this->hope=obj.hope;
+
+    return *this;
+}
+
+Deck::~Deck() {
+    if (cards!=nullptr) {
+        delete[] cards;
+        cards=nullptr;
+    }
+    if (scores!=nullptr) {
+        delete[] scores;
+        scores=nullptr;
+    }
+
+}
 
 
 int main() {
     return 0;
-
 }
