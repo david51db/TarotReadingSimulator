@@ -47,6 +47,9 @@ private:
 public:
     Player();
     Player(char* name, char* job, double money,long confusionLevel, bool active );
+    Player(const Player& obj);
+    Player& operator=(const Player& obj);
+    ~Player();
 };
 
 class Session {
@@ -195,6 +198,60 @@ Deck::~Deck() {
     }
 
 }
+
+//======PLAYER
+
+
+Player::Player() {
+    name=strcpy(new char[4], "N/A");
+    job=strcpy(new char[4], "N/A");
+    money=0.0;
+    confusionLevel=0;
+    active=true;
+}
+
+Player::Player(char *name, char *job, double money, long confusionLevel, bool active) {
+    this->name=strcpy(new char[strlen(name)+1], name);
+    this->job=strcpy(new char[strlen(job)+1], name);
+    this->money=money;
+    this->confusionLevel=confusionLevel;
+    this->active=active;
+}
+
+Player::Player(const Player &obj) {
+    this->name=strcpy(new char[strlen(obj.name)+1], obj.name);
+    this->job=strcpy(new char[strlen(obj.job)+1], obj.job);
+    this->money=obj.money;
+    this->confusionLevel=obj.confusionLevel;
+    this->active=obj.active;
+}
+
+Player& Player::operator=(const Player &obj) {
+    if (this==&obj) return *this;
+    else {
+        delete[] name;
+        delete[] job;
+
+        this->name=strcpy(new char[strlen(obj.name)+1], obj.name);
+        this->job=strcpy(new char[strlen(obj.job)+1], obj.job);
+        this->money=obj.money;
+        this->confusionLevel=obj.confusionLevel;
+        this->active=obj.active;
+
+        return *this;
+    }
+}
+
+Player::~Player() {
+    if (name!=nullptr) {
+        delete[] name;
+        name=nullptr;
+    }
+    if (job!=nullptr) {
+        delete[] job;
+        job=nullptr;
+    }
+};
 
 
 int main() {
