@@ -54,15 +54,17 @@ public:
 
 class Session {
 private:
+    Player* client;
     char domain; // Love-Career-Self
     double price;
     char* type; //Open or Yes/No
+    Deck* deckUsed;
 
     //if open:
     char* spread; //general, specific
 
     //if specific:
-    int nrDrawnCard;
+    int nrDrawnCards; //choice: 2,3,5,7,.... CARDS
     Card* drawnCards;
 
     //if yes or no:
@@ -70,7 +72,10 @@ private:
 
 public:
     Session();
-    Session(char domain, char* type, double price);
+    Session(Player* client, Deck* deckUsed,char domain, char* type, double price);
+    Session(const Session& obj);
+    Session& operator=(const Session& obj);
+    ~Session();
 };
 
 ///============STATICS==============
@@ -212,7 +217,7 @@ Player::Player() {
 
 Player::Player(char *name, char *job, double money, long confusionLevel, bool active) {
     this->name=strcpy(new char[strlen(name)+1], name);
-    this->job=strcpy(new char[strlen(job)+1], name);
+    this->job=strcpy(new char[strlen(job)+1], job);
     this->money=money;
     this->confusionLevel=confusionLevel;
     this->active=active;
@@ -253,6 +258,92 @@ Player::~Player() {
     }
 };
 
+//===SESSION
+
+Session::Session() {
+    domain='?';
+    price=0.0;
+    client=nullptr;
+    type=strcpy(new char[4], "N/A");
+    spread=nullptr;
+    nrDrawnCards=0;
+    drawnCards=nullptr;
+    deckUsed= nullptr;
+    answer=false;
+}
+
+Session::Session(Player *client, Deck *deckUsed, char domain, char *type, double price) {
+    this->client=client;
+    this->deckUsed=deckUsed;
+    this->domain=domain;
+    this->type=strcpy(new char[strlen(type)+1], type);
+    this->price=price;
+    this->spread=nullptr;
+    this->nrDrawnCards=0;
+    this->drawnCards=nullptr;
+    this->answer=false;
+}
+
+Session::Session(const Session &obj) {
+    this->client=obj.client;
+    this->deckUsed=obj.deckUsed;
+    this->domain=obj.domain;
+    this->type=strcpy(new char[strlen(obj.type)+1], obj.type);
+    this->price=obj.price;
+
+    if (obj.spread!=nullptr)
+        this->spread=strcpy(new char[strlen(obj.spread)+1],obj.spread);
+    else this->spread=nullptr;
+
+    this->nrDrawnCards=obj.nrDrawnCards;
+
+    if (obj.drawnCards!=nullptr) {
+        this->drawnCards=new Card[obj.nrDrawnCards];
+        for (int i=0;i<nrDrawnCards;i++) {
+            this->drawnCards[i]=obj.drawnCards[i];
+        }
+    }
+    else drawnCards=nullptr;
+    this->answer=obj.answer;
+}
+
+Session& Session::operator=(const Session& obj) {
+    if (this==&obj) return *this;
+    else {
+        delete[] type;
+        if (spread!=nullptr) delete[] spread;
+        if (drawnCards!=nullptr) delete[] drawnCards;
+
+        this->client=obj.client;
+        this->deckUsed=obj.deckUsed;
+        this->domain=obj.domain;
+        this->type=strcpy(new char[strlen(obj.type)+1], obj.type);
+        this->price=obj.price;
+
+        if (obj.spread!=nullptr)
+            this->spread=strcpy(new char[strlen(obj.spread)+1],obj.spread);
+        else this->spread=nullptr;
+
+        this->nrDrawnCards=obj.nrDrawnCards;
+
+        if (obj.drawnCards!=nullptr) {
+            this->drawnCards=new Card[obj.nrDrawnCards];
+            for (int i=0;i<nrDrawnCards;i++) {
+                this->drawnCards[i]=obj.drawnCards[i];
+            }
+        }
+        else drawnCards=nullptr;
+        this->answer=obj.answer;
+
+        return *this;
+    }
+}
+
+Session::~Session() {
+    delete[] type;
+    if (spread!=nullptr) delete[] spread;
+    if (drawnCards!=nullptr) delete[] drawnCards;
+}
 
 int main() {
     return 0;
