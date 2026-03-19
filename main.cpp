@@ -19,6 +19,12 @@ public:
     Card(const Card& obj);
     Card& operator=(const Card& obj);
     ~Card();
+
+    friend ostream& operator<<(ostream& os, const Card& obj);
+    friend istream& operator>>(istream& is, Card& obj);
+
+    void setName(const char* name);
+    void setMeaning(const char* meaning);
 };
 
 class Deck {
@@ -55,13 +61,13 @@ public:
 class Session {
 private:
     Player* client;
-    char domain; // Love-Career-Self
+    char domain; // Love(L)-Career(C)-Self(S)
     double price;
     char* type; //Open or Yes/No
     Deck* deckUsed;
 
     //if open:
-    char* spread; //general, specific
+    char* spread; //general/ specific
 
     //if specific:
     int nrDrawnCards; //choice: 2,3,5,7,.... CARDS
@@ -343,6 +349,66 @@ Session::~Session() {
     delete[] type;
     if (spread!=nullptr) delete[] spread;
     if (drawnCards!=nullptr) delete[] drawnCards;
+}
+
+
+///======OVERLOADING >> AND << OPERATORS=========
+
+//=====CARD
+
+ostream& operator<<(ostream& os, const Card& obj) {
+    os<<"Name: "            << obj.name             << "\n";
+    os<<"Id: "              << obj.id               << "\n";
+
+    if (obj.arcana=='m')
+        os<<"Arcana: "          << "Minor"               << "\n";
+    else if (obj.arcana=='M')
+        os <<"Arcana: "         << "Major"               << "\n";
+    else
+        os<<"Arcana: "          << obj.arcana               << "\n";
+
+    os<<"Reversed: "        << (obj.reversed ? "Yes" : "No") << "\n";
+    os<<"Energy: "              << obj.energy               << "\n";
+    os<<"Meaning: "              << obj.meaning               << "\n";
+
+    return os;
+}
+
+istream& operator>>(istream& is, Card& obj) {
+
+    char bufName[256];
+    cout<<"Name: ";
+    is>>bufName;
+    obj.setName(bufName);
+
+    cout<<"Arcana(m/M): ";
+    is>>obj.arcana;
+
+    obj.reversed=false;
+
+    cout<<"Energy: ";
+    is>>obj.energy;
+
+    char bufMeaning[256];
+    cout<<"Meaning: ";
+    is>>bufMeaning;
+    obj.setMeaning(bufMeaning);
+
+    return is;
+}
+
+///==========SETTERS=========
+
+//===CARD
+
+void Card::setName(const char* name) {
+    delete[] this->name;
+    this->name=strcpy(new char[strlen(name)+1], name);
+}
+
+void Card::setMeaning(const char *meaning) {
+    delete[] this->meaning;
+    this->meaning=strcpy(new char[strlen(meaning)+1], meaning);
 }
 
 int main() {
