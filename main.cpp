@@ -62,6 +62,11 @@ public:
     Player& operator=(const Player& obj);
     ~Player();
 
+    friend ostream& operator<<(ostream& os, const Player& obj );
+    friend istream& operator>>(istream& is, Player& obj);
+
+    void setName(const char* name);
+    void setJob(const char* job);
 };
 
 class Session {
@@ -459,6 +464,43 @@ istream& operator>>(istream& is, Deck& obj) {
     return is;
 }
 
+ostream& operator<<(ostream& os, const Player& obj) {
+
+    os<<"Name: "<<obj.name<<'\n';
+    os<<"Job: "<<obj.job<<'\n';
+    os<<"Id: "<<obj.id<<'\n';
+    os<<"Money: "<<obj.money<<'\n';
+    os<<"Confusion Level: "<<obj.confusionLevel<<'\n';
+    os<<"Active: "<< (obj.active ? "Yes" : "No") <<'\n';
+
+    return os;
+}
+
+istream& operator>>(istream& is, Player& obj) {
+
+    char bufName[256];
+    cout<<"Name: ";
+    is>>bufName;
+    obj.setName(bufName);
+
+    char bufJob[256];
+    cout<<"Job: ";
+    is>>bufJob;
+    obj.setJob(bufJob);
+
+    cout<<"Money: ";
+    is>>obj.money;
+    cout<<'\n';
+
+    obj.confusionLevel=0;
+    obj.active=true;
+
+    return is;
+}
+
+
+
+
 ///==========SETTERS=========
 
 //===CARD
@@ -477,7 +519,17 @@ void Card::setMeaning(const char *meaning) {
 
 //-------
 
-//===
+//===PLAYER
+
+void Player::setName(const char *name) {
+    delete[] this->name;
+    this->name=strcpy(new char[strlen(name)+1], name);
+}
+
+void Player::setJob(const char *job) {
+    delete[] this->job;
+    this->job=strcpy(new char[strlen(job)+1], job);
+}
 
 
 
