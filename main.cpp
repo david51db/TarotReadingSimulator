@@ -47,6 +47,8 @@ class Player {
 private:
     char* name;
     char* job;
+    const int id;
+    static int totalPlayers;
     double money;
     long confusionLevel;
     bool active; //if confusion level=max>>>>>bye
@@ -61,6 +63,8 @@ public:
 class Session {
 private:
     Player* client;
+    const int id;
+    static int totalSessions;
     char domain; // Love(L)-Career(C)-Self(S)
     double price;
     char* type; //Open or Yes/No
@@ -88,6 +92,9 @@ public:
 
 int Card::totalCards=0;
 int Deck::totalDecks=0;
+int Player::totalPlayers=0;
+int Session::totalSessions=0;
+
 
 ///============CONSTRUCTORS============
 
@@ -213,7 +220,7 @@ Deck::~Deck() {
 //======PLAYER
 
 
-Player::Player() {
+Player::Player():id(++totalPlayers) {
     name=strcpy(new char[4], "N/A");
     job=strcpy(new char[4], "N/A");
     money=0.0;
@@ -221,7 +228,7 @@ Player::Player() {
     active=true;
 }
 
-Player::Player(char *name, char *job, double money, long confusionLevel, bool active) {
+Player::Player(char *name, char *job, double money, long confusionLevel, bool active):id(++totalPlayers) {
     this->name=strcpy(new char[strlen(name)+1], name);
     this->job=strcpy(new char[strlen(job)+1], job);
     this->money=money;
@@ -229,7 +236,7 @@ Player::Player(char *name, char *job, double money, long confusionLevel, bool ac
     this->active=active;
 }
 
-Player::Player(const Player &obj) {
+Player::Player(const Player &obj):id(obj.id) {
     this->name=strcpy(new char[strlen(obj.name)+1], obj.name);
     this->job=strcpy(new char[strlen(obj.job)+1], obj.job);
     this->money=obj.money;
@@ -266,7 +273,7 @@ Player::~Player() {
 
 //===SESSION
 
-Session::Session() {
+Session::Session():id(++totalSessions) {
     domain='?';
     price=0.0;
     client=nullptr;
@@ -278,7 +285,7 @@ Session::Session() {
     answer=false;
 }
 
-Session::Session(Player *client, Deck *deckUsed, char domain, char *type, double price) {
+Session::Session(Player *client, Deck *deckUsed, char domain, char *type, double price):id(totalSessions) {
     this->client=client;
     this->deckUsed=deckUsed;
     this->domain=domain;
@@ -290,7 +297,7 @@ Session::Session(Player *client, Deck *deckUsed, char domain, char *type, double
     this->answer=false;
 }
 
-Session::Session(const Session &obj) {
+Session::Session(const Session &obj) :id(obj.id){
     this->client=obj.client;
     this->deckUsed=obj.deckUsed;
     this->domain=obj.domain;
