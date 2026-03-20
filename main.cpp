@@ -41,6 +41,9 @@ public:
     Deck(const Deck& obj);
     Deck& operator=(const Deck& obj);
     ~Deck();
+
+    friend ostream& operator<<(ostream& os,const Deck& obj);
+    friend istream& operator>>(istream& is, Deck& obj);
 };
 
 class Player {
@@ -58,6 +61,7 @@ public:
     Player(const Player& obj);
     Player& operator=(const Player& obj);
     ~Player();
+
 };
 
 class Session {
@@ -404,6 +408,57 @@ istream& operator>>(istream& is, Card& obj) {
     return is;
 }
 
+//====DECK
+
+ostream& operator<<(ostream& os, const Deck& obj) {
+
+    for (int i=0;i<78;i++) {
+        os <<"Card" << i+1 << ": " << '\n' << obj.cards[i] << '\n';
+    }
+
+    os<<"Id: "<< obj.id << '\n';
+    os<<"Price: " << obj.price << '\n';
+    os<<"Hope: " << obj.hope << '\n';
+
+    os<<"Scores:"<<'\n';
+    os<< "Career: " << obj.scores[0] << '\n';
+    os<< "Love: " << obj.scores[1] << '\n';
+    os<< "Self: " << obj.scores[2] << '\n';
+
+    return os;
+}
+
+istream& operator>>(istream& is, Deck& obj) {
+
+    for (int i=0;i<78;i++) {
+        cout << "Card" << i+1 << ": " << '\n';
+        is >> obj.cards[i] ;
+        cout <<'\n';
+    } //in practice no one will fill up 78 fields lol
+
+    cout<<"Price: " ;
+    is>> obj.price;
+    cout<<'\n';
+
+    cout<<"Hope: ";
+    is>>obj.hope;
+    cout<<'\n';
+
+    cout<<"Career Score: " ;
+    is>> obj.scores[0];
+    cout<<'\n';
+
+    cout<<"Love Score: " ;
+    is>> obj.scores[1];
+    cout<<'\n';
+
+    cout<<"Self Score: " ;
+    is>> obj.scores[2];
+    cout<<'\n';
+
+    return is;
+}
+
 ///==========SETTERS=========
 
 //===CARD
@@ -417,6 +472,15 @@ void Card::setMeaning(const char *meaning) {
     delete[] this->meaning;
     this->meaning=strcpy(new char[strlen(meaning)+1], meaning);
 }
+
+//===DECK
+
+//-------
+
+//===
+
+
+
 
 int main() {
     return 0;
