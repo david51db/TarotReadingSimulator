@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstring>
 #include <iostream>
 using namespace std;
@@ -80,7 +81,8 @@ private:
     Deck* deckUsed;
 
     //if open:
-    char* spread; //general/ specific
+    char* spread; //specific(What does someone think about you, do they have feelings? How do i get a promotion?
+    // OR general for domain
 
     //if specific:
     int nrDrawnCards; //choice: 2,3,5,7,.... CARDS
@@ -95,6 +97,12 @@ public:
     Session(const Session& obj);
     Session& operator=(const Session& obj);
     ~Session();
+
+    friend ostream& operator<<(ostream& os, const Session& obj);
+    friend istream& operator>>(istream& is, Session& obj);
+
+    void setType(int chooseType);
+    void setSpread(int chooseSpread);
 };
 
 ///============STATICS==============
@@ -464,6 +472,9 @@ istream& operator>>(istream& is, Deck& obj) {
     return is;
 }
 
+//===PLAYER
+
+
 ostream& operator<<(ostream& os, const Player& obj) {
 
     os<<"Name: "<<obj.name<<'\n';
@@ -498,6 +509,75 @@ istream& operator>>(istream& is, Player& obj) {
     return is;
 }
 
+//===SESSION
+
+ostream& operator<<(ostream& os, const Session& obj) {
+
+    os<<"Client: "<<'\n';
+    if (obj.client!=nullptr)
+        os<<*obj.client<<'\n';
+
+    os<<"Id: "<< obj.id<<'\n';
+    os<<"Domain: "<<obj.domain<<'\n';
+    os<<"Price: "<<obj.price<<'\n';
+    os<<"Type: "<<obj.type<<'\n';
+    if (strcmp(obj.type,"Yes or No")==0) { ///ATENTIE COMPAR POINTERI. DE REZ!
+        os<<"Answer: "<<(obj.answer?"Yes":"No")<<'\n';
+    }
+    else if (strcmp(obj.type,"Open")==0) {
+        os<<"Spread: "<<obj.spread<<'\n';
+        os<<"Number of drawn cards: "<<obj.nrDrawnCards<<'\n';
+        os<<"Drawn cards: "<<'\n';
+        for (int i=0;i<obj.nrDrawnCards;i++) {
+            os<<"Card "<< i+1<<": "<<'\n';
+            os<<obj.drawnCards[i]<<'\n';
+        }
+    }
+
+    os<<"Deck used: "<<obj.deckUsed<<'\n';
+    return os;
+}
+
+istream& operator>>(istream& is, Session& obj) {
+
+    cout<<"Client: "<<'\n';
+    if (obj.client==nullptr) obj.client= new Player;
+    is >> *obj.client;
+    cout<<'\n';
+
+    cout<<"Domain(C for Career, L for Love, S for Self): "<<'\n';
+    is >> obj.domain;
+    cout<<'\n';
+
+    cout<<"Price: "<<'\n';
+    is>>obj.price;
+    cout<<'\n';
+
+    cout<<"Type of reading. Press 1 for 'Yes/No' reading or Press 2 for open reading: "<<'\n';
+    int chooseType;
+    is>>chooseType;
+    obj.setType(chooseType);
+
+    if (strcmp(obj.type,"Yes or No")==0) {
+        cout<<"Answer(true for Yes, false for No): ";
+        is>>obj.answer;
+        cout<<'\n';
+    }
+    else {
+        cout<<"Type of spread. Press 1 for 'General' reading or Press 2 for 'Specific' reading: "<<'\n';
+        int chooseSpread;
+        is>>chooseSpread;
+        obj.setSpread(chooseSpread);
+    }
+
+    cout<<"Deck: ";
+    if (obj.deckUsed==nullptr) obj.deckUsed=new Deck;
+    is>>*obj.deckUsed;
+    cout<<'\n';
+
+    return is;
+
+}
 
 
 
@@ -531,7 +611,31 @@ void Player::setJob(const char *job) {
     this->job=strcpy(new char[strlen(job)+1], job);
 }
 
+//==SESSION
 
+void Session::setType(int chooseType) {
+
+    delete[] this->type;
+    if (chooseType==1)this->type=strcpy(new char[10], "Yes or No");
+    else if (chooseType==2) this->type=strcpy(new char[5], "Open");
+    else {
+        cout<<"Invalid type. Defaulting to Open";
+        this->type=strcpy(new char[5], "Open");
+    }
+
+
+}
+
+void Session::setSpread(int chooseSpread) {
+
+    delete[] this->spread;
+    if (chooseSpread==1)this->spread=strcpy(new char[8], "General");
+    else if (chooseSpread==2) this->spread=strcpy(new char[9], "Specific");
+    else {
+        cout<<"Invalid type. Defaulting to General";
+        this->spread=strcpy(new char[8], "General");
+    }
+}
 
 
 int main() {
