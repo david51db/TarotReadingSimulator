@@ -897,7 +897,7 @@ void Player::setMoney(double money) {
                 cin>>this->nrDrawnCards;
                 drawCards();
                 float totalEnergy=calculateEnergy();
-                if (totalEnergy > 30)
+                if (totalEnergy > 0)
                     cout << "The reading was successful!\n";
                 else
                     cout << "The reading was unclear...\n";
@@ -923,7 +923,6 @@ void Player::setMoney(double money) {
             this->spread=nullptr;
             this->nrDrawnCards=1;
             cout<<"What is your question?\n";
-            cin.ignore();
             char question[512];
             cin.getline(question, 512);
             drawCards();
@@ -1001,6 +1000,7 @@ void Session::handleConfusedPlayer(Player& client, Deck* decks) {
     cout << "However, we have a special offer! A hope-boosted deck for only 50 pentacles!\n";
     cout << "Would you like to try again? (1=Yes, 0=No)\n";
     int offerChoice;
+    cin.ignore();
     cin >> offerChoice;
     if (offerChoice==1 && client.getPlayerMoney()>=50) {
         client.setActive(true);
@@ -1016,8 +1016,9 @@ void Session::handleConfusedPlayer(Player& client, Deck* decks) {
 
         startSession(client, hopefulDeck);
 
-        delete[] hopefulDeck;
+        delete hopefulDeck;
     }
+    else if (client.getPlayerMoney()<=50) cout<< "You don't have enough money.";
 }
 
 
@@ -1052,7 +1053,7 @@ int main() {
     do {
         cout << "\n===== TAROT READING SIMULATOR =====\n";
         cout << "1. Start new session\n";
-        cout << "2. View deck\n";
+        cout << "2. View decks\n";
         cout << "3. View player info\n";
         cout << "0. Exit\n";
         cout << "Choice: ";
@@ -1061,27 +1062,27 @@ int main() {
 
         switch (choice) {
             case 1: {
-
                 if (!client.playerIsActive()) {
                     Session sC;
                     sC.handleConfusedPlayer(client, decks);
                 }
-                else if (client.getPlayerMoney()<minPrice) cout<<"You don't have enough money";
+                else if (client.getPlayerMoney() < minPrice)
+                    cout << "You don't have enough money";
                 else {
                     Session s;
                     s.startSession(client, decks);
-
                 }
-
-
                 break;
             }
             case 2: {
-
-
+                for (int i = 0; i < Deck::getTotalDecks(); i++)
+                    cout << decks[i] << '\n';
                 break;
             }
-
+            case 3: {
+                cout << client;
+                break;
+            }
         };
     }while (choice!=0);
 
