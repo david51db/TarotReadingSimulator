@@ -1,0 +1,78 @@
+The Fool,M,45.0,A new beginning and leap of faith awaits you,Recklessness and poor judgment cloud your path
+The Magician,M,80.0,You have all the tools and willpower to succeed,Manipulation and untapped potential hold you back
+The High Priestess,M,70.0,Trust your intuition and inner wisdom,Secrets and repressed feelings block your growth
+The Empress,M,75.0,Abundance creativity and nurturing energy surrounds you,Dependence and creative block stifle your progress
+The Emperor,M,65.0,Structure authority and stability guide your path,Rigidity and control issues dominate your actions
+The Hierophant,M,60.0,Tradition and spiritual guidance offer you wisdom,Dogma and rebellion against norms challenge you
+The Lovers,M,85.0,Deep connection harmony and aligned values unite you,Misalignment and poor choices divide your heart
+The Chariot,M,78.0,Determination and willpower drive you to victory,Lack of direction and aggression derail your journey
+Strength,M,72.0,Inner strength courage and patience define your spirit,Self-doubt and weakness undermine your resolve
+The Hermit,M,55.0,Solitude and inner reflection lead to enlightenment,Isolation and withdrawal cut you off from others
+Wheel of Fortune,M,68.0,A fortunate turn of fate brings new opportunities,Bad luck and resistance to change block your path
+Justice,M,65.0,Truth fairness and accountability govern this situation,Dishonesty and injustice skew the outcome against you
+The Hanged Man,M,40.0,Surrender and new perspectives unlock hidden truths,Stalling and resistance to change keep you stuck
+Death,M,50.0,Transformation and necessary endings open new doors,Resistance to change and stagnation hold you back
+Temperance,M,70.0,Balance patience and moderation guide your healing,Imbalance and excess disrupt your inner harmony
+The Devil,M,-75.0,Awareness of bondage is the first step to freedom,Detachment from unhealthy patterns sets you free
+The Tower,M,-85.0,Sudden upheaval clears the way for necessary change,Avoiding disaster prolongs inevitable transformation
+The Star,M,90.0,Hope renewal and spiritual guidance light your way,Despair and lack of faith dim your inner light
+The Moon,M,-60.0,Face your fears and illusions to find clarity,Confusion and deception cloud your perception deeply
+The Sun,M,95.0,Joy success and vitality radiate through your life,Temporary sadness and blocked positivity dim your light
+Judgement,M,75.0,A powerful awakening and redemption calls to you,Self-doubt and refusal to learn from the past hinder you
+The World,M,100.0,Completion wholeness and achievement crown your journey,Incompletion and lack of closure delay your fulfillment
+Ace of Wands,m,70.0,A spark of inspiration and new creative energy ignites,Creative blocks and missed opportunities extinguish your fire
+Two of Wands,m,60.0,Bold planning and future vision set your path forward,Fear of the unknown and poor planning hold you back
+Three of Wands,m,65.0,Expansion and foresight reward your early efforts,Delays and lack of foresight frustrate your plans
+Four of Wands,m,80.0,Celebration harmony and a joyful homecoming await,Instability and lack of roots unsettle your foundation
+Five of Wands,m,-40.0,Healthy competition and conflict sharpen your resolve,Unresolved conflict and ego clashes drain your energy
+Six of Wands,m,78.0,Victory recognition and public success crown your work,Egotism and fall from grace tarnish your achievement
+Seven of Wands,m,55.0,Stand your ground and defend your position firmly,Giving up and overwhelm erode your hard-won position
+Eight of Wands,m,72.0,Swift movement and rapid progress propel you forward,Delays and miscommunication slow your momentum greatly
+Nine of Wands,m,50.0,Resilience and persistence carry you through the last stretch,Exhaustion and paranoia make you abandon your goal
+Ten of Wands,m,-50.0,Hard work and responsibility lead to eventual reward,Overburden and inability to delegate crush your spirit
+Page of Wands,m,60.0,Enthusiasm and a free spirit inspire bold new ideas,Lack of direction and immaturity waste your potential
+Knight of Wands,m,65.0,Passionate action and adventurous energy drive you forward,Impulsiveness and lack of follow-through derail your plans
+Queen of Wands,m,75.0,Confidence courage and charisma define your presence,Jealousy and selfishness undermine your natural power
+King of Wands,m,80.0,Visionary leadership and bold entrepreneurship inspire all,Impulsiveness and high expectations alienate those around you
+Ace of Cups,m,85.0,New emotional beginnings and deep love overflow for you,Emotional repression and emptiness block your heart from opening
+Two of Cups,m,88.0,A powerful mutual connection and partnership blooms between you,Imbalance and broken trust damage this important bond
+Three of Cups,m,80.0,Celebration friendship and joyful community surround you now,Overindulgence and gossip poison your social circle
+Four of Cups,m,-35.0,Contemplation and reevaluation of your emotional life is needed,Missed opportunities and apathy lead to lasting regret
+Five of Cups,m,-65.0,Acknowledge grief but remember what still remains for you,Inability to move on and self-pity prolong your suffering
+Six of Cups,m,60.0,Nostalgia innocence and happy memories from the past resurface,Living in the past and naivety prevent your growth forward
+Seven of Cups,m,40.0,Dreams and imagination open many choices before you now,Illusion and wishful thinking cloud your judgment and decisions
+Eight of Cups,m,-45.0,Walking away from the unfulfilling leads to deeper meaning,Fear of change and clinging to the past drain your energy
+Nine of Cups,m,90.0,Your wishes and emotional satisfaction are within reach now,Greed and dissatisfaction prevent true fulfillment from arriving
+Ten of Cups,m,95.0,Lasting happiness harmony and emotional fulfillment bless your home,Broken family and misaligned values shatter your sense of belonging
+Page of Cups,m,65.0,Creative sensitivity and intuitive messages arrive for you,Emotional immaturity and creative blocks silence your inner voice
+Knight of Cups,m,70.0,A romantic idealistic and compassionate soul guides your path,Moodiness and unrealistic expectations lead to disappointment
+Queen of Cups,m,78.0,Deep empathy emotional wisdom and nurturing define your gifts,Emotional insecurity and martyrdom exhaust you and others
+King of Cups,m,80.0,Emotional balance wisdom and compassionate leadership guide you,Emotional manipulation and volatility harm your relationships deeply
+Ace of Swords,m,65.0,Clarity truth and a breakthrough cut through confusion for you,Confusion and chaos cloud your mind and disrupt your decisions
+Two of Swords,m,-30.0,A difficult decision requires careful reflection and balance,Avoidance and indecision keep you trapped between two paths
+Three of Swords,m,-80.0,Acknowledging heartbreak and grief opens the path to healing,Recovering from deep sorrow and betrayal takes more time
+Four of Swords,m,40.0,Rest recuperation and stillness restore your depleted energy,Restlessness and refusal to recover harm your long-term wellbeing
+Five of Swords,m,-70.0,Choose your battles wisely to preserve your dignity and peace,Reconciliation after conflict is possible if you release your ego
+Six of Swords,m,55.0,A transition to calmer waters brings healing and relief,Resistance to necessary change prolongs your pain and struggle
+Seven of Swords,m,-60.0,Strategy and careful planning help you navigate deception,Exposure of deception and the consequences of dishonesty arrive
+Eight of Swords,m,-55.0,You have more freedom than you believe right now,Releasing self-imposed limitations opens your mind to new paths
+Nine of Swords,m,-75.0,Anxiety and dark thoughts are temporary and can be overcome,Releasing worry and seeking support lightens your heavy burden
+Ten of Swords,m,-90.0,A painful ending clears the way for a powerful new beginning,Recovery from a difficult betrayal or loss takes time and care
+Page of Swords,m,55.0,Curiosity sharp thinking and a thirst for truth define you,Scattered thinking and rushing into action without planning harms you
+Knight of Swords,m,60.0,Ambitious decisive and direct action propels you toward goals,Impulsiveness and poor communication cause unnecessary conflict
+Queen of Swords,m,65.0,Clear boundaries sharp intellect and honest communication serve you,Coldness and bitterness isolate you from those who care for you
+King of Swords,m,70.0,Intellectual authority clear judgment and ethical leadership define you,Abuse of authority and manipulation undermine your true power
+Ace of Pentacles,m,75.0,A new opportunity for material prosperity and security begins,Missed financial opportunities and poor planning limit your growth
+Two of Pentacles,m,55.0,Adaptability and skillful juggling of priorities keeps you balanced,Imbalance and disorganization overwhelm your responsibilities
+Three of Pentacles,m,70.0,Collaboration skilled craftsmanship and teamwork bring results,Lack of teamwork and poor planning undermine the shared effort
+Four of Pentacles,m,40.0,Financial security and stability bring a sense of safety,Greed and excessive control over resources block your abundance
+Five of Pentacles,m,-70.0,Even in hardship support and help are available to you,Recovery from financial struggle and isolation is possible now
+Six of Pentacles,m,72.0,Generosity balance and the flow of giving and receiving bless you,Strings-attached generosity and power imbalances taint your gifts
+Seven of Pentacles,m,58.0,Patience and long-term investment will eventually bear fruit,Impatience and lack of reward for effort cause frustration and doubt
+Eight of Pentacles,m,68.0,Diligence skill-building and dedication define your work ethic,Perfectionism and lack of ambition limit your professional growth
+Nine of Pentacles,m,82.0,Independence financial reward and refined self-sufficiency are yours,Overwork and financial setbacks undermine your hard-earned success
+Ten of Pentacles,m,92.0,Lasting wealth family legacy and long-term security bless you,Family conflict and financial instability threaten your foundation
+Page of Pentacles,m,62.0,Ambitious learning and a practical approach to goals serve you,Lack of focus and missed learning opportunities hold you back
+Knight of Pentacles,m,65.0,Reliable methodical and hardworking effort guarantees your results,Stubbornness and perfectionism slow your steady but sure progress
+Queen of Pentacles,m,78.0,Nurturing practical wisdom and financial care define your gifts,Self-neglect and financial insecurity undermine your generous nature
+King of Pentacles,m,85.0,Abundance financial mastery and reliable leadership define your legacy,Stubbornness and materialism blind you to what truly matters most

@@ -1,4 +1,4 @@
-#include <chrono>
+#include <fstream>
 #include <cstring>
 #include <iostream>
 using namespace std;
@@ -14,9 +14,10 @@ private:
     bool reversed;
     float energy;
     char* meaning;
+    char* meaningReversed;
 public:
     Card();
-    Card( char* name,char arcana, float energy, char* meaning);
+    Card( char* name,char arcana, float energy, char* meaning, char* meaningReversed);
     Card(const Card& obj);
     Card& operator=(const Card& obj);
     ~Card();
@@ -26,6 +27,9 @@ public:
 
     void setName(const char* name);
     void setMeaning(const char* meaning);
+    void setMeaningReversed(const char* meaningReversed);
+
+
 };
 
 class Deck {
@@ -45,6 +49,8 @@ public:
 
     friend ostream& operator<<(ostream& os,const Deck& obj);
     friend istream& operator>>(istream& is, Deck& obj);
+
+    void loadCards(const char* filename);
 };
 
 class Player {
@@ -117,20 +123,22 @@ int Session::totalSessions=0;
 
 //====CARD
 
-Card::Card() :id(++totalCards){
+Card::Card() :id(++totalCards-1){
     name=strcpy(new char[4], "N/A");
     arcana='?';
     reversed= false;
     energy=0.0;
     meaning=strcpy(new char[4], "N/A");
+    meaningReversed=strcpy(new char[4], "N/A");
 }
 
-Card::Card(char* name, char arcana, float energy, char* meaning):id(++totalCards) {
+Card::Card(char* name, char arcana, float energy, char* meaning, char*meaningReversed):id(++totalCards-1) {
     this->name=strcpy(new char[strlen(name)+1],name);
     this->arcana=arcana;
     this->energy=energy;
     this->meaning=strcpy(new char[strlen(meaning)+1],meaning);
     this->reversed=false;
+    this->meaningReversed=strcpy(new char[strlen(meaningReversed)+1], meaningReversed);
 }
 
 Card::Card(const Card& obj):id(obj.id){
@@ -139,6 +147,7 @@ Card::Card(const Card& obj):id(obj.id){
     this->energy=obj.energy;
     this->meaning=strcpy(new char[strlen(obj.meaning)+1], obj.meaning);
     this->reversed=obj.reversed;
+    this->meaningReversed=strcpy(new char[strlen(obj.meaningReversed)+1], obj.meaningReversed);
 }
 
 Card& Card::operator=(const Card& obj){
@@ -146,12 +155,14 @@ Card& Card::operator=(const Card& obj){
 
     delete[] name;
     delete[] meaning;
+    delete[] meaningReversed;
 
     this->name=strcpy(new char[strlen(obj.name)+1], obj.name);
     this->arcana=obj.arcana;
     this->energy=obj.energy;
     this->meaning=strcpy(new char[strlen(obj.meaning)+1], obj.meaning);
     this->reversed=obj.reversed;
+    this->meaningReversed=strcpy(new char[strlen(obj.meaningReversed)+1], obj.meaningReversed);
 
     return *this;
 }
@@ -164,6 +175,11 @@ Card::~Card() {
     if (meaning!=nullptr) {
         delete[] meaning;
         meaning=nullptr;
+    }
+
+    if (meaningReversed!=nullptr) {
+        delete[] meaningReversed;
+        meaningReversed=nullptr;
     }
 }
 
@@ -394,7 +410,7 @@ ostream& operator<<(ostream& os, const Card& obj) {
     os<<"Reversed: "        << (obj.reversed ? "Yes" : "No") << "\n";
     os<<"Energy: "              << obj.energy               << "\n";
     os<<"Meaning: "              << obj.meaning               << "\n";
-
+    os<<"Reversed meaning: "              << obj.meaningReversed               << "\n";
     return os;
 }
 
@@ -415,8 +431,13 @@ istream& operator>>(istream& is, Card& obj) {
 
     char bufMeaning[256];
     cout<<"Meaning: ";
-    is>>bufMeaning;
+    is.getline(bufMeaning, 256);
     obj.setMeaning(bufMeaning);
+
+    char bufMeaningReversed[256];
+    cout<<"Reversed meaning: ";
+    is.getline(bufMeaningReversed,256);
+    obj.setMeaningReversed(bufMeaningReversed);
 
     return is;
 }
@@ -426,7 +447,7 @@ istream& operator>>(istream& is, Card& obj) {
 ostream& operator<<(ostream& os, const Deck& obj) {
 
     for (int i=0;i<78;i++) {
-        os <<"Card" << i+1 << ": " << '\n' << obj.cards[i] << '\n';
+        os <<"Card " << i+1 << ": " << '\n' << obj.cards[i] << '\n';
     }
 
     os<<"Id: "<< obj.id << '\n';
@@ -595,6 +616,11 @@ void Card::setMeaning(const char *meaning) {
     this->meaning=strcpy(new char[strlen(meaning)+1], meaning);
 }
 
+void Card::setMeaningReversed(const char* meaningReversed) {
+    delete[] this->meaningReversed;
+    this->meaningReversed = strcpy(new char[strlen(meaningReversed)+1], meaningReversed);
+}
+
 //===DECK
 
 //-------
@@ -637,7 +663,34 @@ void Session::setSpread(int chooseSpread) {
     }
 }
 
+///=====FUNCTIONS===========
+
+
+//====CARD
+
+
+void Deck::loadCards(const char* filename) {
+    ifstream file(filename);
+    char line[512];
+    int i=0;
+
+    while (file.getline(line,512) && i<78) {
+        char* name=strtok(line, ",");
+        char* arcana=strtok(nullptr, ",");
+        char* energy=strtok(nullptr, ",");
+        char* meaning=strtok(nullptr, ",");
+        char* meaningReversed=strtok(nullptr, ",");
+
+        cards[i]=Card(name, arcana[0], atof(energy), meaning, meaningReversed );
+        i++;
+    }
+
+    file.close();
+}
 
 int main() {
+    Deck deck;
+    deck.loadCards("cards.txt");
+    cout<<deck;
     return 0;
 }
