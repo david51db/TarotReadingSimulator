@@ -141,6 +141,22 @@ public:
     void handleConfusedPlayer(Player& client, Deck* decks);
 };
 
+class Menu {
+private:
+    Deck decks[3];
+    Player client;
+    double minPrice;
+    bool running;
+
+public:
+    Menu();
+
+    void run();
+};
+
+
+
+
 ///============STATICS==============
 
 int Card::totalCards=0;
@@ -421,6 +437,28 @@ Session::~Session() {
     if (drawnCards!=nullptr) delete[] drawnCards;
 }
 
+//===MENU
+
+Menu::Menu() {
+    decks[0].loadCards("cards.txt");
+    decks[1].loadCards("cards.txt");
+    decks[2].loadCards("cards.txt");
+
+    decks[0].setHope(7);
+    decks[0].setScores(8, 1, 2);
+    decks[0].calculatePrice();
+
+    for (int i=1; i<3;i++) {
+        decks[i].setScoresAndHope(decks[i]);
+        decks[i].calculatePrice();
+    }
+
+    minPrice = decks[0].getPrice();
+    for (int i=0;i<3;i++)
+        if (minPrice>decks[i].getPrice()) minPrice=decks[i].getPrice();
+
+    client.initClient();
+}
 
 ///======OVERLOADING >> AND << OPERATORS=========
 
@@ -629,6 +667,8 @@ istream& operator>>(istream& is, Session& obj) {
     return is;
 
 }
+
+//==MENU
 
 
 
@@ -1021,33 +1061,11 @@ void Session::handleConfusedPlayer(Player& client, Deck* decks) {
     else if (client.getPlayerMoney()<=50) cout<< "You don't have enough money.";
 }
 
+//===MENU
 
 
 
-
-int main() {
-    srand(time(nullptr));
-
-    Deck decks[3];
-    decks[0].loadCards("cards.txt");
-    decks[1].loadCards("cards.txt");
-    decks[2].loadCards("cards.txt");
-
-
-    decks[0].setHope(7);
-    decks[0].setScores(8, 1, 2);
-    decks[0].calculatePrice();
-
-    for (int i=1;i<Deck::getTotalDecks();i++) {
-        decks[i].setScoresAndHope(decks[i]);
-        decks[i].calculatePrice();
-    }
-    double minPrice = decks[0].getPrice();
-    for (int i=0;i<Deck::getTotalDecks();i++){
-        if (minPrice>decks[i].getPrice())minPrice=decks[i].getPrice();
-    }
-    Player client;
-    client.initClient();
+void Menu::run() {
     int choice;
 
     do {
@@ -1075,7 +1093,7 @@ int main() {
                 break;
             }
             case 2: {
-                for (int i = 0; i < Deck::getTotalDecks(); i++)
+                for (int i = 0; i<3; i++)
                     cout << decks[i] << '\n';
                 break;
             }
@@ -1086,5 +1104,12 @@ int main() {
         };
     }while (choice!=0);
 
+}
+
+
+int main() {
+    srand(time(nullptr));
+    Menu menu;
+    menu.run();
     return 0;
 }
