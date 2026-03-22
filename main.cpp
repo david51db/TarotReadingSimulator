@@ -66,7 +66,8 @@ public:
     double getPrice();
     Card* getCards();
     int getHope();
-    double setPrice(double);
+    void setPrice(double);
+    int* getScores();
 };
 
 class Player {
@@ -134,7 +135,7 @@ public:
 
     void setType(int chooseType);
     void setSpread(int chooseSpread);
-    void startSession(Player& client, Deck* decks);
+    void startSession(Player& client, Deck* decks, int nrDecks);
     void drawCards();
     float calculateEnergy();
     void applySessionResult(Player& client, float totalEnergy, Deck* decks) ;
@@ -364,7 +365,7 @@ Session::Session():id(++totalSessions) {
     answer=false;
 }
 
-Session::Session(Player *client, Deck *deckUsed, char domain, char *type, double price):id(totalSessions) {
+Session::Session(Player *client, Deck *deckUsed, char domain, char *type, double price):id(++totalSessions) {
     this->client=client;
     this->deckUsed=deckUsed;
     this->domain=domain;
@@ -440,6 +441,17 @@ Session::~Session() {
 //===MENU
 
 Menu::Menu() {
+
+
+    cout << R"(
+ _____                _     ____                _ _
+|_   _|_ _ _ __ ___ | |_  |  _ \ ___  __ _  __| (_)_ __   __ _
+  | |/ _` | '__/ _ \| __| | |_) / _ \/ _` |/ _` | | '_ \ / _` |
+  | | (_| | | | (_) | |_  |  _ <  __/ (_| | (_| | | | | | (_| |
+  |_|\__,_|_|  \___/ \__| |_| \_\___|\__,_|\__,_|_|_| |_|\__, |
+                                                           |___/
+    )" << '\n';
+
     decks[0].loadCards("cards.txt");
     decks[1].loadCards("cards.txt");
     decks[2].loadCards("cards.txt");
@@ -499,6 +511,7 @@ istream& operator>>(istream& is, Card& obj) {
 
     char bufMeaning[256];
     cout<<"Meaning: ";
+    is.ignore();
     is.getline(bufMeaning, 256);
     obj.setMeaning(bufMeaning);
 
@@ -518,14 +531,19 @@ ostream& operator<<(ostream& os, const Deck& obj) {
     //     os <<"Card " << i+1 << ": " << '\n' << obj.cards[i] << '\n';
     // }
 
-    os<<"Deck "<< obj.id << ":\n";
-    os<<"Price: " << obj.price << '\n';
-    os<<"Hope: " << obj.hope << '\n';
+    os << "=== DECK " << obj.id << " ===\n";
+    os << "Price:  " << obj.price << " pentacles\n";
+    os << "Hope:   " << obj.hope << "/10\n";
+    os << "Career: " << obj.scores[0] << "/10\n";
+    os << "Love:   " << obj.scores[1] << "/10\n";
+    os << "Self:   " << obj.scores[2] << "/10\n\n";
 
-    os<<"Scores:"<<'\n';
-    os<< "-Career: " << obj.scores[0] << '\n';
-    os<< "-Love: " << obj.scores[1] << '\n';
-    os<< "-Self: " << obj.scores[2] << '\n';
+    int maxScore = max(obj.scores[0], obj.scores[1]);
+    maxScore=max(maxScore, obj.scores[2]);
+    if (maxScore == obj.scores[0]) os << "Good for: Career\n";
+    if (maxScore == obj.scores[1]) os << "Good for: Love\n";
+    if (maxScore == obj.scores[2]) os << "Good for: Self\n";
+    os << "-------------------\n";
 
     return os;
 }
@@ -566,13 +584,13 @@ istream& operator>>(istream& is, Deck& obj) {
 
 ostream& operator<<(ostream& os, const Player& obj) {
 
-    os<<"Name: "<<obj.name<<'\n';
-    os<<"Job: "<<obj.job<<'\n';
-    os<<"Id: "<<obj.id<<'\n';
-    os<<"Money: "<<obj.money<<'\n';
-    os<<"Confusion Level: "<<obj.confusionLevel<<'\n';
-    os<<"Active: "<< (obj.active ? "Yes" : "No") <<'\n';
-
+    os << "=== PLAYER INFO ===\n";
+    os << "Name:            " << obj.name << "\n";
+    os << "Job:             " << obj.job << "\n";
+    os << "Pentacles:       " << obj.money << "\n";
+    os << "Confusion Level: " << obj.confusionLevel << "/100\n";
+    os << "Status:          " << (obj.active ? "Active" : "Confused") << "\n";
+    os << "-------------------\n";
     return os;
 }
 
@@ -622,8 +640,7 @@ ostream& operator<<(ostream& os, const Session& obj) {
             os<<obj.drawnCards[i]<<'\n';
         }
     }
-
-    os<<"Deck used: "<<obj.deckUsed<<'\n';
+    if (obj.deckUsed) os<<"Deck used: "<<*obj.deckUsed<<'\n';
     return os;
 }
 
@@ -818,8 +835,12 @@ int Deck::getHope() {
     return this->hope;
 }
 
-double Deck::setPrice(double price) {
+void Deck::setPrice(double price) {
     this->price=price;
+}
+
+int *Deck::getScores() {
+    return this->scores;
 }
 
 //===Player
@@ -827,7 +848,7 @@ double Deck::setPrice(double price) {
 void Player::initClient() {
 
     char clientName[256], clientJob[256];
-    cout<<"Welcome!\nWhat's your name?";
+    cout<<"Welcome!\nWhat's your name?\n";
     cin>>clientName;
     cout<<"Hi "<<clientName<<"!\n"<<"Please enter your job.\n";
     cin>>clientJob;
@@ -835,9 +856,10 @@ void Player::initClient() {
           "you'll recieve 500 pentacles right now.\n"
           "Don't worry! You can recieve promotions after a good reading!\n"
             "However, should the fates be upset with you, you'll recieve a bad reading.\n"
-            "This means that your confusion level will rise. If your confusion level is very high you won't want readings anymore.";
-
+            "This means that your confusion level will rise. If your confusion level is very high you won't want readings anymore.\n\n";
+    delete[] this->name;
     this->name=strcpy(new char[strlen(clientName)+1], clientName);
+    delete[] this->job;
     this->job=strcpy(new char[strlen(clientJob)+1], clientJob);
     this->money=500;
     this->active=true;
@@ -872,209 +894,221 @@ void Player::setMoney(double money) {
 //===SESSION
 
 
-    void Session::startSession(Player& client, Deck* decks) {
-        cout<<"Please choose your deck by typing the deck number."<<'\n';
-        for (int i=0;i<Deck::getTotalDecks();i++) {
-            cout<<decks[i]<<'\n';
-        }
-        int choiceDeck;
-        cin>>choiceDeck;
-        if (decks[choiceDeck-1].getPrice()>client.getPlayerMoney())
-            cout<<"You can't afford this deck. Please choose another one.\n";
-        else {
-            if (choiceDeck>=1 && choiceDeck<=Deck::getTotalDecks()) this->deckUsed=&decks[choiceDeck-1];
-            else {
-                cout<<"This is not a valid option. Defaulting to the cheapest deck.\n";
-                int minIdx = 0;
-                for (int i = 1; i < Deck::getTotalDecks(); i++) {
-                    if (decks[i].getPrice() < decks[minIdx].getPrice())
-                        minIdx = i;
-                }
-                this->deckUsed = &decks[minIdx];
-            }
-        }
+void Session::startSession(Player &client, Deck *decks, int nrDecks) {
+    cout << "Please choose your deck by typing the deck number." << '\n';
+    for (int i = 0; i < nrDecks; i++) {
+        cout << decks[i] << '\n';
+    }
+    int choiceDeck;
+    cin >> choiceDeck;
+
+    if (choiceDeck < 1 || choiceDeck > nrDecks) {
+        cout << "Invalid choice.\n";
+        return;
+    }
+
+    if (decks[choiceDeck - 1].getPrice() > client.getPlayerMoney()) {
+        cout << "You can't afford this deck. Please choose another one.\n";
+        return;
+    }
+
+    this->deckUsed = &decks[choiceDeck - 1];
     client.setMoney(client.getPlayerMoney() - deckUsed->getPrice());
-        cout<<"Now please choose what do you want your reading to be about.\n"
-              "Select one of the following domains by typing the corresponding number.\n"
-              "1. Career\n"
-              "2. Love\n"
-              "3. Self\n";
-        int choiceDomain;
-        cin>>choiceDomain;
-        switch (choiceDomain) {
-            case 1: this->domain='C'; break;
-            case 2: this->domain='L'; break;
-            case 3: this->domain='S'; break;
-            default: {
-                cout<<"No valid option chosen. Defaulting to Career.";
-                this->domain='C';
-            }
+    cout << "Now please choose what do you want your reading to be about.\n"
+            "Select one of the following domains by typing the corresponding number.\n"
+            "1. Career\n"
+            "2. Love\n"
+            "3. Self\n";
+    int choiceDomain;
+    cin >> choiceDomain;
+    switch (choiceDomain) {
+        case 1: this->domain = 'C';
+            break;
+        case 2: this->domain = 'L';
+            break;
+        case 3: this->domain = 'S';
+            break;
+        default: {
+            cout << "No valid option chosen. Defaulting to Career.";
+            this->domain = 'C';
         }
-        if (type!=nullptr)delete[] type;
-        cout<<"What type of reading do you want?\n"
-              "Select one of the following options by typing the corresponding number.\n"
-              "1. Yes or No question\n"
-              "2. Open reading\n";
-        int choiceType;
-        cin>>choiceType;
-        if (choiceType==2) {
-            this->type=strcpy(new char[5], "Open");
-            cout<<"Please choose what spread do you want by entering the corresponding number.\n"
-                  "1. General\n"
-                  "2. Specific question\n";
-            int choiceSpread;
-            cin>>choiceSpread;
-            if (spread!=nullptr)delete[] spread;
+    }
+    if (type != nullptr)delete[] type;
+    cout << "What type of reading do you want?\n"
+            "Select one of the following options by typing the corresponding number.\n"
+            "1. Yes or No question\n"
+            "2. Open reading\n";
+    int choiceType;
+    cin >> choiceType;
+    if (choiceType == 2) {
+        this->type = strcpy(new char[5], "Open");
+        cout << "Please choose what spread do you want by entering the corresponding number.\n"
+                "1. General\n"
+                "2. Specific question\n";
+        int choiceSpread;
+        cin >> choiceSpread;
+        if (spread != nullptr)delete[] spread;
 
-            if (choiceSpread==2) {
-
-                this->spread=strcpy(new char[9], "Specific");
-                cout<<"What is your question?\n";
-                cin.ignore();
-                char question[512];
-                cin.getline(question, 512);
-                cout<<"How many cards do you want drawn out?\n";
-                cin>>this->nrDrawnCards;
-                drawCards();
-                float totalEnergy=calculateEnergy();
-                if (totalEnergy > 0)
-                    cout << "The reading was successful!\n";
-                else
-                    cout << "The reading was unclear...\n";
-                this->applySessionResult(client, totalEnergy, decks);
-
-            }
-
-            else { if (choiceSpread!=1)cout<<"Invalid option. Defaulting to General.";
-                this->spread = strcpy(new char[8], "General");
-                cout<<"How many cards do you want drawn?\n";
-                cin>>this->nrDrawnCards;
-                drawCards();
-                float spreadEnergy=calculateEnergy();
-                if (spreadEnergy > 30)
-                    cout << "The reading was successful!\n";
-                else
-                    cout << "The reading was unclear...\n";
-                this->applySessionResult(client, spreadEnergy, decks);
-            }
-        }
-        else { if (choiceType!=1)cout<<"This is not a valid option. Defaulting to Yes or No.";
-            this->type=strcpy(new char[10], "Yes or No");
-            this->spread=nullptr;
-            this->nrDrawnCards=1;
-            cout<<"What is your question?\n";
+        if (choiceSpread == 2) {
+            this->spread = strcpy(new char[9], "Specific");
+            cout << "What is your question?\n";
+            cin.ignore();
             char question[512];
+            cin.ignore(1000, '\n');
             cin.getline(question, 512);
+            cout << "How many cards do you want drawn out?\n";
+            cin >> this->nrDrawnCards;
             drawCards();
-            float spreadEnergy=drawnCards[0].getEnergy();
-            if (spreadEnergy>25)cout<<"Answer: Yes.";
-            else if (spreadEnergy<0)cout<<"Answer: No.";
-            else cout<< "Answer: Maybe.";
-        }
-    }
-
-    void Session::drawCards(){
-        delete[] drawnCards;
-        drawnCards=new Card[nrDrawnCards];
-        bool drawn[78]={false};
-
-        for (int i=0;i<nrDrawnCards;i++) {
-            int randomIndx;
-            do {
-                randomIndx = rand() % 78;
-            } while (drawn[randomIndx]);
-            drawn[randomIndx]=true;
-            drawnCards[i]=deckUsed->getCards()[randomIndx];
-            drawnCards[i].setReversed(rand() % 2 == 0);
-            cout<<"Card "<<i+1<<" has been drawn...\n";
-        }
-
-        cout << "\nAll cards have been drawn. Press Enter to reveal them...\n";
-        cin.ignore();
-        cin.get();
-
-        for (int i=0;i<nrDrawnCards;i++) {
-            cout <<"\nCard "<< i+1 <<":\n";
-            drawnCards[i].revealCards();
-        }
-    }
-
-    float Session::calculateEnergy() {
-        float sumEnergy=0.0;
-        for (int i=0;i<nrDrawnCards;i++) {
-            sumEnergy+=drawnCards[i].getEnergy();
-        }
-        float avg = sumEnergy/ nrDrawnCards;
-        avg += deckUsed->getHope() * 2.0f; // hope boost
-        return avg;
-    }
-
-    void Session::applySessionResult(Player& client, float totalEnergy, Deck* decks) {
-        if (totalEnergy > 30) {
-            client.setConfusionLevel(client.getConfusionLevel()-75);
-            if (client.getConfusionLevel() < 0) client.setConfusionLevel(0) ;
-            if (domain == 'C') {
-                client.setMoney(client.getPlayerMoney()+1000);
-                cout << "You got a promotion! +1000 pentacles!\n";
-            }
-            if (domain == 'L') {
-                client.setMoney(client.getPlayerMoney()+500);
-                cout << "You found a wealthy partner! +250 pentacles!\n";
-            }
-            if (domain=='S') {
-                client.setMoney(client.getPlayerMoney()+300);
-                cout<<"You gather strength and enter a new chapter of your life. Creativity and confidence brings money. +300 pentacles!\n";
-            }
+            float totalEnergy = calculateEnergy();
+            if (totalEnergy > 10)
+                cout << "The reading was successful!\n";
+            else
+                cout << "The reading was unclear...\n";
+            this->applySessionResult(client, totalEnergy, decks);
         } else {
-            client.setConfusionLevel(client.getConfusionLevel()+50);
-            if (client.getConfusionLevel()>= 100) {
-                client.setActive(false);
-                handleConfusedPlayer(client, decks);
+            if (choiceSpread != 1)cout << "Invalid option. Defaulting to General.";
+            this->spread = strcpy(new char[8], "General");
+            cout << "How many cards do you want drawn?\n";
+            cin >> this->nrDrawnCards;
+            drawCards();
+            float spreadEnergy = calculateEnergy();
+            if (spreadEnergy > 30)
+                cout << "The reading was successful!\n";
+            else
+                cout << "The reading was unclear...\n";
+            this->applySessionResult(client, spreadEnergy, decks);
+        }
+    } else {
+        if (choiceType != 1)cout << "This is not a valid option. Defaulting to Yes or No.";
+        this->type = strcpy(new char[10], "Yes or No");
+        this->spread = nullptr;
+        this->nrDrawnCards = 1;
+        cout << "What is your question?\n";
+        char question[512];
+        cin.ignore(1000, '\n');
+        cin.getline(question, 512);
+        drawCards();
+        float spreadEnergy = drawnCards[0].getEnergy();
+        if (spreadEnergy > 25)cout << "Answer: Yes.";
+        else if (spreadEnergy < 0)cout << "Answer: No.";
+        else cout << "Answer: Maybe.";
+    }
+}
 
-            }
+void Session::drawCards() {
+    delete[] drawnCards;
+    drawnCards = new Card[nrDrawnCards];
+    bool drawn[78] = {false};
+
+    for (int i = 0; i < nrDrawnCards; i++) {
+        int randomIndx;
+        do {
+            randomIndx = rand() % 78;
+        } while (drawn[randomIndx]);
+        drawn[randomIndx] = true;
+        drawnCards[i] = deckUsed->getCards()[randomIndx];
+        drawnCards[i].setReversed(rand() % 2 == 0);
+        cout << "Card " << i + 1 << " has been drawn...\n";
+    }
+
+    cout << "\nAll cards have been drawn. Press Enter to reveal them...\n";
+    cin.ignore();
+    cin.get();
+
+    for (int i = 0; i < nrDrawnCards; i++) {
+        cout << "\nCard " << i + 1 << ":\n";
+        drawnCards[i].revealCards();
+    }
+    cout<<'\n';
+}
+
+float Session::calculateEnergy() {
+    if (nrDrawnCards==0) return 0.0;
+    float sumEnergy = 0.0;
+    for (int i = 0; i < nrDrawnCards; i++) {
+        sumEnergy += drawnCards[i].getEnergy();
+    }
+    float avg = sumEnergy / nrDrawnCards;
+    avg += deckUsed->getHope() * 2.0f; // hope boost
+    if (domain=='C') avg+=deckUsed->getScores()[0]*1.5f;
+    if (domain=='L') avg+=deckUsed->getScores()[1]*1.5f;
+    if (domain=='S') avg+=deckUsed->getScores()[2]*1.5f;
+    return avg;
+}
+
+void Session::applySessionResult(Player &client, float totalEnergy, Deck *decks) {
+    if (totalEnergy > 30) {
+        client.setConfusionLevel(client.getConfusionLevel() - 75);
+        if (client.getConfusionLevel() < 0) client.setConfusionLevel(0);
+        if (domain == 'C') {
+            client.setMoney(client.getPlayerMoney() + 1000);
+            cout << "You got a promotion! +1000 pentacles!\n\n";
+        }
+        if (domain == 'L') {
+            client.setMoney(client.getPlayerMoney() + 250);
+            cout << "You found a wealthy partner! +250 pentacles!\n\n";
+        }
+        if (domain == 'S') {
+            client.setMoney(client.getPlayerMoney() + 300);
+            cout <<
+                    "You gather strength and enter a new chapter of your life. Creativity and confidence brings money. +300 pentacles!\n\n";
+        }
+    } else {
+        client.setConfusionLevel(client.getConfusionLevel() + 50);
+        if (client.getConfusionLevel() >= 100) {
+            client.setActive(false);
+            handleConfusedPlayer(client, decks);
         }
     }
+}
 
 void Session::handleConfusedPlayer(Player& client, Deck* decks) {
-    cout << "You are too confused...\n";
-    cout << "However, we have a special offer! A hope-boosted deck for only 50 pentacles!\n";
+    cout << "You are too confused...\n\n";
+    cout << "However, we have a special offer! A hope-boosted deck for only 25 pentacles!\n";
     cout << "Would you like to try again? (1=Yes, 0=No)\n";
     int offerChoice;
-    cin.ignore();
+    cin.clear();
+
     cin >> offerChoice;
-    if (offerChoice==1 && client.getPlayerMoney()>=50) {
+    cin.ignore(1000, '\n');
+    if (offerChoice == 1) {
         client.setActive(true);
         client.setConfusionLevel(0);
-        client.setMoney(client.getPlayerMoney() - 50);
+        if (client.getPlayerMoney() < 25) {
+            cout << "You can't afford the special offer.\n";
+            return;
+        }
+        client.setMoney(client.getPlayerMoney() - 25);
+        cout << "\nGood choice! The fates give you one more chance...\n\n";
 
-        Deck* hopefulDeck = new Deck;
+        Deck* hopefulDeck = new Deck; ;
         hopefulDeck->loadCards("cards.txt");
         hopefulDeck->setHope(10);
-        hopefulDeck->setScores(9,10, 9);
-        hopefulDeck->setPrice(50);
+        hopefulDeck->setScores(9, 10, 9);
+        hopefulDeck->setPrice(25);
 
-
-        startSession(client, hopefulDeck);
-
+        this->deckUsed=hopefulDeck;
+        startSession(client, hopefulDeck, 1);
         delete hopefulDeck;
+    } else {
+        cout << "The stars are not aligned for you today. Farewell!\n";
     }
-    else if (client.getPlayerMoney()<=50) cout<< "You don't have enough money.";
 }
 
 //===MENU
 
-
-
 void Menu::run() {
     int choice;
 
-    do {
+    do {cout<<'\n';
+
         cout << "\n===== TAROT READING SIMULATOR =====\n";
+        cout << "Pentacles: " << client.getPlayerMoney() << "\n";
         cout << "1. Start new session\n";
         cout << "2. View decks\n";
         cout << "3. View player info\n";
         cout << "0. Exit\n";
-        cout << "Choice: ";
+        cout << "Choice:\n";
         cin >> choice;
 
 
@@ -1088,7 +1122,8 @@ void Menu::run() {
                     cout << "You don't have enough money";
                 else {
                     Session s;
-                    s.startSession(client, decks);
+                    s.startSession(client, decks, 3);
+                    cout << "\n====================================\n";
                 }
                 break;
             }
