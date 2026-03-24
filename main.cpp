@@ -16,6 +16,10 @@ private:
     float energy;
     char* meaning;
     char* meaningReversed;
+
+    void setName(const char* name) ;
+    void setMeaning(const char* meaning) ;
+    void setMeaningReversed(const char* meaningReversed) ;
 public:
     Card();
     Card( char* name,char arcana, float energy, char* meaning, char* meaningReversed);
@@ -26,12 +30,10 @@ public:
     friend ostream& operator<<(ostream& os, const Card& obj);
     friend istream& operator>>(istream& is, Card& obj);
 
-    void setName(const char* name);
-    void setMeaning(const char* meaning);
-    void setMeaningReversed(const char* meaningReversed);
-    void setReversed(bool random);
-    void revealCards();
-    float getEnergy();
+
+    void setReversed(bool random) ;
+    void revealCards() const;
+    float getEnergy() const;
 
 };
 
@@ -55,19 +57,19 @@ public:
 
     void loadCards(const char* filename);
 
-    static int getTotalDecks();
+    static int getTotalDecks() ;
 
-    void setScoresAndHope(Deck& deck);
-    void setScores(int C, int L, int S);
-    void setHope(int hope);
-    void setRandomScores();
-    void setRandomHope();
-    void calculatePrice();
-    double getPrice();
-    Card* getCards();
-    int getHope();
-    void setPrice(double);
-    int* getScores();
+    void setScoresAndHope (Deck& deck) ;
+    void setScores(int C, int L, int S) ;
+    void setHope(int hope) ;
+    void setRandomScores() ;
+    void setRandomHope() ;
+    void calculatePrice() ;
+    double getPrice() const;
+    Card* getCards() const;
+    int getHope() const;
+    void setPrice(double) ;
+    int* getScores() const;
 };
 
 class Player {
@@ -79,6 +81,9 @@ private:
     double money;
     long confusionLevel;
     bool active; //if confusion level=max>>>>>bye
+
+    void setName(const char* name) ;
+    void setJob(const char* job) ;
 public:
     Player();
     Player(char* name, char* job, double money,long confusionLevel, bool active );
@@ -89,16 +94,15 @@ public:
     friend ostream& operator<<(ostream& os, const Player& obj );
     friend istream& operator>>(istream& is, Player& obj);
 
-    void setName(const char* name);
-    void setJob(const char* job);
+
 
     void initClient();
-    bool playerIsActive();
-    double getPlayerMoney();
-    long getConfusionLevel();
-    void setConfusionLevel(long confusionLevel);
-    void setActive(bool);
-    void setMoney(double);
+    bool playerIsActive() const;
+    double getPlayerMoney() const;
+    long getConfusionLevel() const;
+    void setConfusionLevel(long confusionLevel) ;
+    void setActive(bool) ;
+    void setMoney(double) ;
 
 };
 
@@ -123,6 +127,11 @@ private:
     //if yes or no:
     bool answer;
 
+    void drawCards();
+    float calculateEnergy();
+    void applySessionResult(Player& client, float totalEnergy, Deck* decks) ;
+
+
 public:
     Session();
     Session(Player* client, Deck* deckUsed,char domain, char* type, double price);
@@ -133,12 +142,9 @@ public:
     friend ostream& operator<<(ostream& os, const Session& obj);
     friend istream& operator>>(istream& is, Session& obj);
 
-    void setType(int chooseType);
-    void setSpread(int chooseSpread);
+    void setType(int chooseType) ;
+    void setSpread(int chooseSpread) ;
     void startSession(Player& client, Deck* decks, int nrDecks);
-    void drawCards();
-    float calculateEnergy();
-    void applySessionResult(Player& client, float totalEnergy, Deck* decks) ;
     void handleConfusedPlayer(Player& client, Deck* decks);
 };
 
@@ -628,7 +634,7 @@ ostream& operator<<(ostream& os, const Session& obj) {
     os<<"Domain: "<<obj.domain<<'\n';
     os<<"Price: "<<obj.price<<'\n';
     os<<"Type: "<<obj.type<<'\n';
-    if (strcmp(obj.type,"Yes or No")==0) { ///ATENTIE COMPAR POINTERI. DE REZ!
+    if (strcmp(obj.type,"Yes or No")==0) {
         os<<"Answer: "<<(obj.answer?"Yes":"No")<<'\n';
     }
     else if (strcmp(obj.type,"Open")==0) {
@@ -693,17 +699,17 @@ istream& operator>>(istream& is, Session& obj) {
 
 //===CARD
 
-void Card::setName(const char* name) {
+void Card::setName(const char* name)  {
     delete[] this->name;
     this->name=strcpy(new char[strlen(name)+1], name);
 }
 
-void Card::setMeaning(const char *meaning) {
+void Card::setMeaning(const char *meaning)  {
     delete[] this->meaning;
     this->meaning=strcpy(new char[strlen(meaning)+1], meaning);
 }
 
-void Card::setMeaningReversed(const char* meaningReversed) {
+void Card::setMeaningReversed(const char* meaningReversed)  {
     delete[] this->meaningReversed;
     this->meaningReversed = strcpy(new char[strlen(meaningReversed)+1], meaningReversed);
 }
@@ -714,19 +720,19 @@ void Card::setMeaningReversed(const char* meaningReversed) {
 
 //===PLAYER
 
-void Player::setName(const char *name) {
+void Player::setName(const char *name)  {
     delete[] this->name;
     this->name=strcpy(new char[strlen(name)+1], name);
 }
 
-void Player::setJob(const char *job) {
+void Player::setJob(const char *job)  {
     delete[] this->job;
     this->job=strcpy(new char[strlen(job)+1], job);
 }
 
 //==SESSION
 
-void Session::setType(int chooseType) {
+void Session::setType(int chooseType)  {
 
     delete[] this->type;
     if (chooseType==1)this->type=strcpy(new char[10], "Yes or No");
@@ -739,7 +745,7 @@ void Session::setType(int chooseType) {
 
 }
 
-void Session::setSpread(int chooseSpread) {
+void Session::setSpread(int chooseSpread)  {
 
     delete[] this->spread;
     if (chooseSpread==1)this->spread=strcpy(new char[8], "General");
@@ -754,15 +760,15 @@ void Session::setSpread(int chooseSpread) {
 
 //===CARD
 
-void Card::setReversed(bool random) {
+void Card::setReversed(bool random)  {
     this->reversed=random;
 }
 
-void Card::revealCards() {
+void Card::revealCards()  const{
     cout<<this->name<<(reversed? " reversed: " : ": ")<<(reversed? this->meaningReversed: this->meaning)<<'\n';
 }
 
-float Card::getEnergy() {
+float Card::getEnergy() const{
     if (this->reversed) return -(this->energy);
     else return this->energy;
 }
@@ -788,29 +794,29 @@ void Deck::loadCards(const char* filename) {
     file.close();
 }
 
-void Deck::setScoresAndHope(Deck& deck) {
+void Deck::setScoresAndHope(Deck& deck)  {
     deck.setRandomHope();
     deck.setRandomScores();
 }
 
-void Deck::setScores(int C, int L, int S) {
+void Deck::setScores(int C, int L, int S)  {
     this->scores[0]=C;
     this->scores[1]=L;
     this->scores[2]=S;
 }
 
-void Deck::setHope(int hope) {
+void Deck::setHope(int hope)  {
     this->hope=hope;
 }
 
-void Deck::setRandomScores() {
+void Deck::setRandomScores()  {
     this->scores[0]= rand() %10 +1;
     this->scores[1]= rand() %10 +1;
     this->scores[2]= rand() %10 +1;
 
 }
 
-void Deck::setRandomHope() {
+void Deck::setRandomHope()  {
     this->hope=rand()%10+1;
 
 }
@@ -819,27 +825,27 @@ int Deck::getTotalDecks() {
     return totalDecks;
 }
 
-void Deck::calculatePrice() {
+void Deck::calculatePrice()  {
     this->price=100+(this->scores[0]+this->scores[1]+this->scores[2])*5+(this->hope)*3;
 }
 
-double Deck::getPrice() {
+double Deck::getPrice() const {
     return this->price;
 }
 
-Card* Deck::getCards() {
+Card* Deck::getCards() const {
     return this->cards;
 }
 
-int Deck::getHope() {
+int Deck::getHope() const {
     return this->hope;
 }
 
-void Deck::setPrice(double price) {
+void Deck::setPrice(double price)  {
     this->price=price;
 }
 
-int *Deck::getScores() {
+int *Deck::getScores ()  const{
     return this->scores;
 }
 
@@ -867,27 +873,27 @@ void Player::initClient() {
 
 }
 
-bool Player::playerIsActive() {
+bool Player::playerIsActive ()  const{
     return this->active;
 }
 
-double Player::getPlayerMoney() {
+double Player::getPlayerMoney ()  const{
     return this->money;
 }
 
-long Player::getConfusionLevel() {
+long Player::getConfusionLevel () const{
     return this->confusionLevel;
 }
 
-void Player::setConfusionLevel(long confusionLevel) {
+void Player::setConfusionLevel (long confusionLevel)  {
     this->confusionLevel=confusionLevel;
 }
 
-void Player::setActive (bool active) {
+void Player::setActive (bool active)   {
     this->active=active;
 }
 
-void Player::setMoney (double money) {
+void Player::setMoney (double money)  {
     this->money=money;
 }
 
@@ -972,7 +978,6 @@ void Session::startSession(Player &client, Deck *decks, int nrDecks) {
         if (choiceSpread == 2) {
             this->spread = strcpy(new char[9], "Specific");
             cout << "What is your question?\n";
-            cin.ignore();
             char question[512];
             cin.ignore(1000, '\n');
             cin.getline(question, 512);
@@ -1116,6 +1121,7 @@ void Session::handleConfusedPlayer(Player& client, Deck* decks) {
         this->deckUsed=hopefulDeck;
         startSession(client, hopefulDeck, 1);
         delete hopefulDeck;
+        this->deckUsed = nullptr;
 
     } else {
         cout << "The stars are not aligned for you today. Farewell!\n";
